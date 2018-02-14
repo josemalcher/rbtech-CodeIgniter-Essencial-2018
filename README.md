@@ -42,7 +42,89 @@ http://dev.rbtech.info/codeigniter-essencial-mvc-estrutura-diretorios
 
 ---
 
-## <a name="parte3"></a>
+## <a name="parte3">CodeIgniter Essencial - MVC na prática</a>
+
+#### htdocs\rbtech_ci\application\controllers\Base.php
+```php
+<?php
+defined('BASEPATH') or exit('No direct script access allowed');
+
+class Base extends CI_Controller
+{
+
+    function __construct()
+    {
+        parent::__construct();
+    }
+  
+    public function index()
+    {
+        
+    }
+}
+
+```
+#### htdocs\rbtech_ci\application\controllers\Exemplo1.php
+```php
+<?php
+defined('BASEPATH') or exit('No direct script access allowed');
+
+class Exemplo1 extends CI_Controller
+{
+
+    function __construct()
+    {
+        parent::__construct();
+        $this->load->model('Exemplo1_model','apelido_model');
+    }
+
+    public function index()
+    {
+        //echo "teste";
+        $dados['titulo'] = 'Texto de Título';
+        $dados['conteudo'] = 'The page you are looking at is being generated dynamically by CodeIgniter.';
+        $this->load->view('Exemplo1',$dados);
+    }
+    public function login(){
+        //echo "login - Recupednado o segmento";
+        //echo $this->uri->segment(3);
+        $this->apelido_model->salvar();
+    }
+}
+
+```
+
+#### htdocs\rbtech_ci\application\models\Exemplo1_model.php
+```php
+<?php
+defined('BASEPATH') or exit('No direct script access allowed');
+
+class Exemplo1_model extends CI_Model
+{
+    function __construct()
+    {
+        parent::__construct();
+    }
+
+    public function salvar(){
+        echo "Executando do MODEL - salvar";
+    }
+
+
+}
+```
+
+#### htdocs\rbtech_ci\application\views\exemplo1.php
+```html
+<div id="container">
+	<h1><?php echo $titulo ?></h1>
+	<div id="body">
+		<p><?php echo $conteudo ?></p>
+	</div>
+
+
+</div>
+```
 
 
 
