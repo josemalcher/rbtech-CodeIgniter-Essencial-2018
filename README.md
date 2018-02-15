@@ -42,7 +42,7 @@ http://dev.rbtech.info/codeigniter-essencial-mvc-estrutura-diretorios
 
 ---
 
-## <a name="parte3">CodeIgniter Essencial - MVC na prática</a>
+## <a name="parte3">g</a>
 
 #### htdocs\rbtech_ci\application\controllers\Base.php
 ```php
@@ -132,7 +132,7 @@ class Exemplo1_model extends CI_Model
 
 ---
 
-## <a name="parte4"></a>
+## <a name="parte4">CodeIgniter Essencial - Criando um site parte 1</a>
 
 
 
