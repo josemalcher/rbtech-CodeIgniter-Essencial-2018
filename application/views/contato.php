@@ -2,7 +2,8 @@
 	<div class="row">
       <div class="col-md-6 col-md-offset-3">
         <div class="well well-sm">
-          <form class="form-horizontal" action="" method="post">
+          
+        <form class="form-horizontal" action="" method="post">
           <fieldset>
             <legend class="text-center">Contact us</legend>
     
@@ -38,6 +39,7 @@
             </div>
           </fieldset>
           </form>
+          
         </div>
       </div>
 	</div>

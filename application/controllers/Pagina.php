@@ -31,7 +31,13 @@ class Pagina extends CI_Controller
 
     public function contato()
     {
-        
+        $this->load->helper('form');
+        $campo = '';
+        foreach ($_POST as $campo => $valor) {
+            $$campo = $valor;
+            
+        }
+        echo $campo;
         
         $dados['titulo'] = 'contato - Titulo do Site';
 
