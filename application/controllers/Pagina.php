@@ -32,17 +32,33 @@ class Pagina extends CI_Controller
     public function contato()
     {
         $this->load->helper('form');
-        $campo = '';
-        foreach ($_POST as $campo => $valor) {
-            $$campo = $valor;
-            
+        $this->load->library(array('form_validation', 'email'));
+        
+        //Regras de validação do formulario
+        $this->form_validation->set_rules('nome','Nome', 'trim|required');
+        $this->form_validation->set_rules('email','Email', 'trim|required|valid_email');
+        $this->form_validation->set_rules('mensagem','Mensagem', 'trim|required');
+
+        if($this->form_validation->run() == FALSE){
+            $dados['formerror'] = validation_errors();
+        }else{
+            $dados_form = $this->input->post();
+            $this->email->from($dados_form['email'],$dados_form['nome']);
+            $this->email->to('email@email.com.br');
+            //$this->email->subject($dados_form['assunto']);
+            $this->email->message($dados_form['mensagem']);
+            if($this->email->send()){
+                $dados['formerror'] = 'ENVIADO COM SUCESSO';
+            }else{
+                $dados['formerror'] = 'ERRO AO ENVIARR';
+            }
+            // OBS.: É necessário configurar o servidor para envio de email
         }
-        echo $campo;
+
         
         $dados['titulo'] = 'contato - Titulo do Site';
-
         $this->load->view('header', $dados);
-        $this->load->view('contato');
+        $this->load->view('contato',$dados);
         //$this->load->view('noticias');
         $this->load->view('footer');
     }

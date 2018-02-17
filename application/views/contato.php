@@ -2,44 +2,24 @@
 	<div class="row">
       <div class="col-md-6 col-md-offset-3">
         <div class="well well-sm">
-          
-        <form class="form-horizontal" action="" method="post">
-          <fieldset>
-            <legend class="text-center">Contact us</legend>
-    
-            <!-- Name input-->
-            <div class="form-group">
-              <label class="col-md-3 control-label" for="name">Name</label>
-              <div class="col-md-9">
-                <input id="name" name="name" type="text" placeholder="Your name" class="form-control">
-              </div>
-            </div>
-    
-            <!-- Email input-->
-            <div class="form-group">
-              <label class="col-md-3 control-label" for="email">Your E-mail</label>
-              <div class="col-md-9">
-                <input id="email" name="email" type="text" placeholder="Your email" class="form-control">
-              </div>
-            </div>
-    
-            <!-- Message body -->
-            <div class="form-group">
-              <label class="col-md-3 control-label" for="message">Your message</label>
-              <div class="col-md-9">
-                <textarea class="form-control" id="message" name="message" placeholder="Please enter your message here..." rows="5"></textarea>
-              </div>
-            </div>
-    
-            <!-- Form actions -->
-            <div class="form-group">
-              <div class="col-md-12 text-right">
-                <button type="submit" class="btn btn-primary btn-lg">Submit</button>
-              </div>
-            </div>
-          </fieldset>
-          </form>
-          
+
+        <?php 
+          if($formerror){
+            echo '<h4>' . $formerror .'</h4>';
+          }
+          echo form_open('pagina/contato',array('class'=> 'form-horizontal'));
+          echo "<fieldset><legend class='text - center'>Contact us</legend>";
+            echo form_label('seu nome', 'nome');
+            echo form_input('nome', set_value('nome'), array('class' => 'form-control'));
+            echo form_label('seu email', 'email');
+            echo form_input('email', set_value('email'), array('class' => 'form-control'));
+            echo form_label('Mensagem', 'mensagem');
+            echo form_textarea('mensagem', set_value('mensagem'), array('class' => 'form-control'));
+            echo form_submit('enviar', 'Enviar Mensagem', array('class'=> 'btn btn-primary'));
+          echo "</fieldset>";
+          echo form_close();
+        
+        ?>
         </div>
       </div>
 	</div>
