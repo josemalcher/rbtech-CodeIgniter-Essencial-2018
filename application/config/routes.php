@@ -55,3 +55,8 @@ $route['translate_uri_dashes'] = FALSE;
 
 $route['sobre'] = 'pagina/sobre';
 $route['contato'] = 'pagina/contato';
+
+$route['post'] = 'pagina';
+$route['post/(:num)'] = 'pagina/post/$1';
+$route['login'] = 'setup/login';
+$route['painel'] = 'setup/login';
