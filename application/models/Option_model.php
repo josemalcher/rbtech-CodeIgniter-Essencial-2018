@@ -8,7 +8,7 @@ class Option_model extends CI_Model
         parent::__construct();
     }
 
-    public function get_option($option_name)
+    public function get_option($option_name, $default_value=NULL) //$default_value=NULL Vai ser a opção de quando não há no BD
     {
         $this->db->where('option_name', $option_name);
         $query = $this->db->get('options', 1); //LIMIT 1
@@ -16,7 +16,7 @@ class Option_model extends CI_Model
             $row = $query->row();
             return $row->option_value;
         } else {
-            return null;
+            return $default_value;
         }
     }
 

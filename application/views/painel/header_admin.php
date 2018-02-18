@@ -9,13 +9,13 @@
     <meta name="description" content="">
     <meta name="author" content="José Malcher Junior">
 
-    <title><?php echo $titulo;?> </title>
+    <title><?php echo $titulo; ?> </title>
 
     <!-- Bootstrap Core CSS -->
-    <link href="<?php echo base_url('assets/css/bootstrap.min.css');?> " rel="stylesheet">
+    <link href="<?php echo base_url('assets/css/bootstrap.min.css'); ?> " rel="stylesheet">
 
     <!-- Custom CSS -->
-    <link href="<?php echo base_url('assets/css/small-business.css');?>" rel="stylesheet">
+    <link href="<?php echo base_url('assets/css/small-business.css'); ?>" rel="stylesheet">
     <link href="<?php echo base_url('assets/css/blog-post.css'); ?>" rel="stylesheet">
 
     <!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
@@ -38,19 +38,23 @@
                     <span class="icon-bar"></span>
                     <span class="icon-bar"></span>
                     <span class="icon-bar"></span>
-                </button><h2><?php 
-                                    echo $this->option->get_option('nome_site2','FALTA CONFIGURAR');
-
-                        ?></h2>
+                </button>
+                <a class="navbar-brand" href="<?php echo base_url(); ?>" target='_blank'> VER SITE </a>
             </div>
             <!-- Collect the nav links, forms, and other content for toggling -->
             <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
                 <ul class="nav navbar-nav">
                     <li>
-                        <a href="<?php echo base_url('sobre'); ?>">Sobre</a>
+                        <?php echo $titulo; ?>
                     </li>
                     <li>
-                        <a href="<?php echo base_url('contato'); ?>">Contato</a>
+                        <a href="<?php echo base_url('noticia'); ?>">Noticias</a>
+                    </li>
+                    <li>
+                        <a href="<?php echo base_url('setup'); ?>">CONDIGURAÇÕES</a>
+                    </li>
+                    <li>
+                        <a href="<?php echo base_url('setup/logout'); ?>">SAIR</a>
                     </li>
                 </ul>
             </div>

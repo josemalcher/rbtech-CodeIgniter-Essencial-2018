@@ -86,7 +86,8 @@ class Setup extends CI_Controller
                     $this->session->set_userdata('user_login', $dados_form['login']);
                     $this->session->set_userdata('user_email', $this->option->get_option('user_email'));
                         // Fazer redirect para a HOME do PAINEL
-                    var_dump($_SESSION); //teste
+                    //var_dump($_SESSION); //teste
+                    redirect('setup/alterar','refresh');
                 else :
                     // SENHA incorreta
                 set_msg('<p>Senha Incorreta</p>');
@@ -105,6 +106,58 @@ class Setup extends CI_Controller
         $this->load->view('header', $dados);
         $this->load->view('painel/login', $dados);
         $this->load->view('footer');
+    }
+
+    public function alterar(){
+        //verificar o login do usuário
+        verifica_login();
+
+        //regras de validação
+        $this->form_validation->set_rules('login', 'NOME', 'trim|required|min_length[5]');
+        $this->form_validation->set_rules('email', 'EMAIL', 'trim|required|valid_email');
+        $this->form_validation->set_rules('nome_site', 'NOME DO SITE', 'trim|required');
+        $this->form_validation->set_rules('senha', 'SENHA', 'trim|min_length[6]'); //required removido
+        if(isset($_POST['senha']) && $_POST['senha'] != ''){
+            $this->form_validation->set_rules('senha2', 'REPITA SENHA', 'trim|required|min_length[6]|matches[senha]');
+        }
+
+        //VERIFICA A VALIDAÇÃO
+        if($this->form_validation->run() == FALSE){
+            if(validation_errors()){
+                set_msg(validation_errors());
+            }
+        }else{
+            $dados_form = $this->input->post();
+            $this->option->update_option('user_login',$dados_form['login']);
+            $this->option->update_option('user_email',$dados_form['email']);
+            $this->option->update_option('nome_site',$dados_form['nome_site']);
+            if(isset($dados_form['senha']) && $dados_form['senha'] != ''){
+                $this->option->update_option('user_pass', password_hash($dados_form['senha'], PASSWORD_DEFAULT));
+            }
+            set_msg('<p>Dados alterado com sucesso!</p>');
+        }
+
+
+
+         //Carrega a view
+        $dados['titulo'] = 'CONFIGURAÇÔES DO SISTEMA';
+        
+        $_POST['login'] = $this->option->get_option('user_login');
+        $_POST['email'] = $this->option->get_option('user_email');
+        $_POST['nome_site'] = $this->option->get_option('nome_site');
+
+        $this->load->view('painel/header_admin', $dados);
+        $this->load->view('painel/config', $dados);
+        $this->load->view('painel/footer');
+    }
+
+    public function logout(){
+        //destroi os dados da sessão
+        $this->session->unset_userdata('logged');
+        $this->session->unset_userdata('user_login');
+        $this->session->unset_userdata('user_email');
+        set_msg('<p>VOCE SAIU DO SISTEMA</p>');
+        redirect('setup/login','refresh');
     }
 
 

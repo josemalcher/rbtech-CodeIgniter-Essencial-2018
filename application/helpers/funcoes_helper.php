@@ -20,3 +20,14 @@ if(!function_exists('get_msg')):
         return $retorno;
     }
 endif;
+
+if(!function_exists('verifica_login')){
+    //verifica se o usuário será logado, caso negativa redireciona para outra página
+    function verifica_login($redirect='setup/login'){
+        $ci = &get_instance();
+        if($ci->session->userdata('logged') != TRUE){
+            set_msg('<p>Acesso Restrito! Faça login para continuar</p>');
+            redirect($redirect, 'refresh');
+        }
+    }
+}
