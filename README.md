@@ -2,6 +2,8 @@
 
 http://dev.rbtech.info/codeigniter-essencial-introducao-instalacao
 
+REPOSITÓRIO ANTERIOR: https://github.com/josemalcher/rbtech-CodeIgniter-Essencial
+
 ---
 
 ## <a name="indice">Índice</a>
@@ -260,7 +262,7 @@ class Pagina extends CI_Controller
 
 ---
 
-## <a name="parte8"></a>
+## <a name="parte8">CodeIgniter Essencial - Criando um painel parte 1</a>
 
 
 
@@ -268,7 +270,58 @@ class Pagina extends CI_Controller
 
 ---
 
-## <a name="parte9"></a>
+## <a name="parte9">CodeIgniter Essencial - Criando um painel parte 2</a>
+
+igual ao : 
+
+https://github.com/josemalcher/rbtech-CodeIgniter-Essencial#parte9
+
+#### Ajuste em login
+
+```php
+public function login(){
+        if ($this->option->get_option('setup_executado') != 1) :
+            //SETUP NÃO OK, mostrar tela para instalar o sistema
+        redirect('setup/instalar', 'refresh');
+        endif;
+        //regras de validação
+        $this->form_validation->set_rules('login', 'NOME', 'trim|required|min_length[5]');
+        $this->form_validation->set_rules('senha', 'SENHA', 'trim|required|min_length[6]');
+
+        // verifica a validação
+        if ($this->form_validation->run() == false) :
+            if (validation_errors()) :
+                set_msg(validation_errors());
+            endif;
+        else :
+            $dados_form = $this->input->post();
+            if ($this->option->get_option('user_login') == $dados_form['login']) :
+                //usuário existe
+                if (password_verify($dados_form['senha'], $this->option->get_option('user_pass'))) :
+                        //senha ok, fazer login
+                    $this->session->set_userdata('logged', true);
+                    $this->session->set_userdata('user_login', $dados_form['login']);
+                    $this->session->set_userdata('user_email', $this->option->get_option('user_email'));
+                        // Fazer redirect para a HOME do PAINEL
+                    var_dump($_SESSION); //teste
+                else :
+                    // SENHA incorreta
+                set_msg('<p>Senha Incorreta</p>');
+                endif;
+            else :
+                // usuário não existe
+                set_msg('<p>USUÀRIO não existe!!</p>');
+            endif;
+
+        endif;
+```
+
+
+[Voltar ao Índice](#indice)
+
+---
+
+## <a name="parte10">CodeIgniter Essencial - Criando um painel parte 3</a>
 
 
 
@@ -276,7 +329,7 @@ class Pagina extends CI_Controller
 
 ---
 
-## <a name="parte10"></a>
+## <a name="parte11">CodeIgniter Essencial - Criando um painel parte 4</a>
 
 
 
@@ -284,7 +337,7 @@ class Pagina extends CI_Controller
 
 ---
 
-## <a name="parte11"></a>
+## <a name="parte12">CodeIgniter Essencial - Criando um painel parte 5</a>
 
 
 
@@ -292,15 +345,7 @@ class Pagina extends CI_Controller
 
 ---
 
-## <a name="parte12"></a>
-
-
-
-[Voltar ao Índice](#indice)
-
----
-
-## <a name="parte13"></a>
+## <a name="parte13">CodeIgniter Essencial - Criando um painel parte 6</a>
 
 
 
