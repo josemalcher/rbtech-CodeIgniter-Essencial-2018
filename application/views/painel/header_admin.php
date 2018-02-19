@@ -17,6 +17,7 @@
     <!-- Custom CSS -->
     <link href="<?php echo base_url('assets/css/small-business.css'); ?>" rel="stylesheet">
     <link href="<?php echo base_url('assets/css/blog-post.css'); ?>" rel="stylesheet">
+    <link href="<?php echo base_url('assets/css/jquery-te-1.4.0.css'); ?>" rel="stylesheet">
 
     <!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
     <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->

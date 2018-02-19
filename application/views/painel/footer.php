@@ -15,6 +15,10 @@
 
     <!-- Bootstrap Core JavaScript -->
     <script src="<?php echo base_url('assets/js/bootstrap.min.js') ?>"></script>
+    <script src="<?php echo base_url('assets/js/jquery-te-1.4.0.min.js') ?>"></script>
+    <script>
+        $('.editorhtml').jqte();
+    </script>
 
 </body>
 

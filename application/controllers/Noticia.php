@@ -54,8 +54,8 @@ class Noticia extends CI_Controller
                 $dados_upload = $this->upload->data();
                 $dados_form = $this->input->post();
                 //var_dump($dados_upload);
-                $dados_insert['titulo'] = $dados_form['titulo'];
-                $dados_insert['conteudo'] = $dados_form['conteudo'];
+                $dados_insert['titulo'] = to_bd($dados_form['titulo']);
+                $dados_insert['conteudo'] = to_bd($dados_form['conteudo']);
                 $dados_insert['imagem'] = $dados_upload['file_name'];
                 // SALvAR NO BD
                 if($id = $this->noticia->salvar($dados_insert)){
@@ -80,6 +80,55 @@ class Noticia extends CI_Controller
         $this->load->view('painel/noticias', $dados);
         $this->load->view('painel/footer');
     }
+
+    public function excluir(){
+        //verifica se o usuário está logado
+        verifica_login();
+
+        //verifica se foi passado o id da notícia
+        $id = $this->uri->segment(3);
+        if($id > 0){
+            //id informado, proceder com a exclusão
+            if($noticia = $this->noticia->get_single($id)){
+                $dados['noticia'] = $noticia;
+            }else{
+                set_msg('<p>Noticía (id) INEXISTENTE - Escolha uma noticia para excluir</p>');
+                redirect('noticia/listar', 'refresh');
+            }
+        }else{
+            set_msg('<p>Noticía (id) inexistente</p>');
+            redirect('noticia/listar','refresh');
+        }
+
+        //REGRAS DE VALIDAÇÃO
+        $this->form_validation->set_rules('enviar', 'ENVIAR', 'trim|required');
+        
+        // Verifica a validação
+        if($this->form_validation->run() == FALSE){
+            if(validation_errors()){
+                set_msg(validation_errors);
+            }
+        }else{
+            $imagem = 'uploads/'.$noticia->imagem;
+            if($this->noticia->excluir($id)){
+                unlink($imagem);
+                set_msg('<p>Notícia excluida com sucesso</p>');
+                redirect('noticia/listar','refresh');
+            }else{
+                set_msg('<p>ERRO AO GRAVAR NO BANCO</p>');
+            }
+        }
+
+
+
+        //carrega a view
+        $dados['titulo'] = 'Exclusão DE NOTÍCIAS';
+        $dados['tela'] = 'excluir';
+        $this->load->view('painel/header_admin', $dados);
+        $this->load->view('painel/noticias', $dados);
+        $this->load->view('painel/footer');
+    }
+
 
     
 }
