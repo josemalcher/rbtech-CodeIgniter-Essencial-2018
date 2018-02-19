@@ -793,7 +793,266 @@ class Option_model extends CI_Model
 
 ## <a name="parte11">CodeIgniter Essencial - Criando um painel parte 4</a>
 
+#### htdocs\rbtech_ci\application\controllers\Noticia.php
 
+```php
+<?php
+defined('BASEPATH') or exit('No direct script access allowed');
+
+class Noticia extends CI_Controller
+{
+
+    function __construct()
+    {
+        parent::__construct();
+        $this->load->helper('form');
+        $this->load->library('form_validation');
+        $this->load->model('option_model','option');
+        $this->load->model('noticia_model','noticia');
+    }
+
+    public function index()
+    {
+        redirect('noticia/listar','refresh');
+    }
+
+    public function listar()
+    {
+        //verifica se o usuário está logado
+        verifica_login();
+
+        //carrega a View
+
+        $dados['titulo'] = 'LISTAGEM DE NOTÍCIAS';
+        $dados['tela'] = 'listar';
+
+        $dados['noticias'] = $this->noticia->get(); 
+
+        $this->load->view('painel/header_admin', $dados);
+        $this->load->view('painel/noticias', $dados);
+        $this->load->view('painel/footer');
+    }
+    public function cadastrar()
+    {
+        //verifica se o usuário está logado
+        verifica_login();
+
+        //Regras de validação
+        $this->form_validation->set_rules('titulo','TÍTULO', 'trim|required');
+        $this->form_validation->set_rules('conteudo','CONTEÚDO', 'trim|required');
+
+        if($this->form_validation->run() == FALSE){
+            if(validation_errors()){
+                set_msg(validation_errors());
+            }
+        }else{
+            $this->load->library('upload',config_upload()); /* Foi criada uma função para configurações de UPload */
+            if($this->upload->do_upload('imagem')){
+                //upload foi efetuado
+                $dados_upload = $this->upload->data();
+                $dados_form = $this->input->post();
+                //var_dump($dados_upload);
+                $dados_insert['titulo'] = $dados_form['titulo'];
+                $dados_insert['conteudo'] = $dados_form['conteudo'];
+                $dados_insert['imagem'] = $dados_upload['file_name'];
+                // SALvAR NO BD
+                if($id = $this->noticia->salvar($dados_insert)){
+                    set_msg('<p>Notícia cadastrada com sucesso!!</p>');
+                    redirect('noticia/listar', 'refresh');
+                }else{
+                    set_msg('<p>ERRO - NOTICIA NÃO CADASTRADA</p>');
+                }
+            }else{
+                // ERRO no upload
+                $msg = $this->upload->display_errors();
+                $msg.= '<p>São permitidos JPG e PNG até 512 KB</p>';
+                set_msg($msg);
+            }
+        }
+
+        //carrega a View
+
+        $dados['titulo'] = 'CADASTRO DE NOTÍCIAS';
+        $dados['tela'] = 'cadastrar';
+        $this->load->view('painel/header_admin', $dados);
+        $this->load->view('painel/noticias', $dados);
+        $this->load->view('painel/footer');
+    }
+
+    
+}
+
+```
+
+#### htdocs\rbtech_ci\application\models\Noticia_model.php
+
+```php
+<?php
+defined('BASEPATH') or exit('No direct script access allowed');
+
+class Noticia_model extends CI_Model
+{
+    function __construct()
+    {
+        parent::__construct();
+    }
+
+    public function salvar($dados)
+    {
+        if(isset($dados['id']) && $dados['id'] > 0 ){
+            // noticia já existe, devo EDITAR
+        }else{
+            // Noticia NÃO existe, devo inserir
+            $this->db->insert('noticias', $dados);
+            return $this->db->insert_id();
+        }
+    }
+
+    public function get($limit=0, $offset=0){
+        if($limit == 0 ){
+            $this->db->order_by('id','desc');
+            $query = $this->db->get('noticias');
+            if($query->num_rows() > 0){
+                return $query->result();
+            }else{
+                return NULL;
+            }
+        }else{
+            $this->db->order_by('id','desc');
+            $query = $this->db->get('noticias', $limit);
+            if($query->num_rows() > 0){
+                return $query->result();
+            }else{
+                return NULL;
+            }
+        }
+    }
+
+
+}
+```
+
+#### htdocs\rbtech_ci\application\helpers\funcoes_helper.php
+
+```php
+<?php
+defined('BASEPATH') or exit('No direct script access allowed');
+
+if(!function_exists('set_msg')):
+    //seta a mensagem via session para ser alida posteriomente
+    function set_msg($msg=NULL){
+        $ci = & get_instance();
+        $ci->session->set_userdata('aviso',$msg);
+    }
+endif;
+
+if(!function_exists('get_msg')):
+    //retorna ma mensage definida pela função set_msg
+    function get_msg($destroy=TRUE){
+        $ci = & get_instance();
+        $retorno = $ci->session->userdata('aviso');
+        if($destroy){
+            $ci->session->unset_userdata('aviso');
+        }
+        return $retorno;
+    }
+endif;
+
+if(!function_exists('verifica_login')){
+    //verifica se o usuário será logado, caso negativa redireciona para outra página
+    function verifica_login($redirect='setup/login'){
+        $ci = &get_instance();
+        if($ci->session->userdata('logged') != TRUE){
+            set_msg('<p>Acesso Restrito! Faça login para continuar</p>');
+            redirect($redirect, 'refresh');
+        }
+    }
+}
+
+if(!function_exists('config_upload')){
+    //define as condigurações para upload de imagens/arquivos
+    function config_upload($path='./uploads/', $types='jpg|png', $size=512){
+        $config['upload_path'] = $path;
+        $config['allowed_types'] = $types;
+        $config['max_size'] = $size;
+        return $config;
+    }
+}
+```
+
+#### htdocs\rbtech_ci\application\views\painel\noticias.php
+```php
+
+<div class="container">
+	<div class="row" >
+        <div class="col-md-6" style="text-align:center">
+            <div class="nav">
+                <li>
+                    <a href="<?php echo base_url('noticia/cadastrar'); ?>">INSERIR</a>
+                </li>
+            </div>
+        </div>
+        <div class="col-md-6" style="text-align:center">
+            <div class="nav">
+                <li>
+                    <a href="<?php echo base_url('noticia/listar'); ?>">LISTAR</a>
+                </li>
+            </div>
+        </div>
+        <div class="col-md-12">
+            <div class="well well-sm">
+
+                <?php
+                if ($msg = get_msg()) :
+                    echo '<div class="alert alert-danger">' . $msg . '</div>';
+                endif;
+
+                switch($tela):
+                    case 'listar':
+                        if(isset($noticias) && sizeof($noticias) > 0){
+                            ?>
+                            <table  class='table table-hover'>
+                                <thead>
+                                    <th>Título</th>
+                                    <th align="right" style="text-align: right;">Ações</th>
+                                </thead>
+                                <tbody>
+                                    <?php foreach($noticias as $linha): ?>
+                                        <tr>
+                                            <td class="titulo-noticia"><?php echo $linha->titulo; ?></td>
+                                            <td align="right"><?php echo anchor('noticia/editar/'.$linha->id, 'Editar'); ?> | <?php echo anchor('noticia/excluir/'.$linha->id, 'Excluir'); ?> | <?php echo anchor('post/'.$linha->id, 'Ver', array('target' => '_blank')); ?> </td>
+                                        </tr>
+                                    <?php endforeach; ?>
+                                </tbody>
+                            </table>
+                            <?php
+                        }else{
+                            echo '<div class="msg-box"><p>Nenhuma notícia cadastrada</p></div>';
+                        }
+                    break;
+                    case 'cadastrar':
+                        echo form_open_multipart('', array('class' => 'form-signin'));
+                            echo form_label('Titulo:', 'titulo');
+                            echo form_input('titulo', set_value('titulo'), array('class' => 'form-control'));
+                            echo form_label('Conteúdo:', 'conteudo');
+                            echo form_textarea('conteudo', set_value('conteudo'), array('class' => 'form-control'));
+                            echo form_label('Imagem da notícia(thumbnail)', 'imagem');
+                            echo form_upload('imagem');
+                            echo form_submit('enviar', 'Salvar Notícia', array('class'=> 'btn btn-primary'));
+                        echo form_close();
+                    break;
+                    case 'excluir':
+                        echo 'Tela de Exclusão';
+                    break;
+                
+                endswitch;
+
+                ?>
+            </div>
+        </div>
+	</div>
+</div>
+```
 
 [Voltar ao Índice](#indice)
 
