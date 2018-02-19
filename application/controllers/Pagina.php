@@ -8,7 +8,9 @@ class Pagina extends CI_Controller
     {
         parent::__construct();
         $this->load->helper('url');
+        $this->load->library('form_validation');
         $this->load->model('option_model','option');
+        $this->load->model('noticia_model', 'noticia');
     }
 
     public function index()
@@ -61,6 +63,34 @@ class Pagina extends CI_Controller
         $this->load->view('header', $dados);
         $this->load->view('contato',$dados);
         //$this->load->view('noticias');
+        $this->load->view('footer');
+    }
+
+    
+    /* -------------------------- ABRINDO UM POST ------------------------ */
+    public function post()
+    {
+
+        if (($id = $this->uri->segment(2)) > 0) {
+            if ($noticia = $this->noticia->get_single($id)) {
+                $dados['titulo'] = to_html($noticia->titulo) . ' - José Malcher jr.';
+                $dados['not_titulo'] = to_html($noticia->titulo);
+                $dados['not_conteudo'] = to_html($noticia->conteudo);
+                $dados['not_imagem'] = $noticia->imagem;
+            } else {
+                $dados['titulo'] = 'Página não encontrada';
+                $dados['not_titulo'] = 'Noticia não encontrada';
+                $dados['not_conteudo'] = '<p>Nenhuma noticia doi encontrada com base nos parametros fornecidos</p>';
+                $dados['imagem'] = '';
+            }
+        } else {
+            redirect(base_url(), 'refresh');
+        }
+
+
+        $this->load->view('header', $dados);
+        $this->load->view('post', $dados);
+        $this->load->view('noticias');
         $this->load->view('footer');
     }
 }

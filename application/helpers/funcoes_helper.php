@@ -55,3 +55,13 @@ if (!function_exists('to_html')) {
         return html_entity_decode($string);
     }
 }
+
+/* ---- GERA um texto parcial  a partir de um post */
+if(!function_exists('resumo_post')){
+    function resumo_post($string=NULL, $tamanho=100){
+        $string = to_html($string);
+        $string = strip_tags($string);
+        $string = substr($string, 0, $tamanho);
+        return $string; 
+    }
+}

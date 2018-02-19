@@ -12,6 +12,11 @@ class Noticia_model extends CI_Model
     {
         if(isset($dados['id']) && $dados['id'] > 0 ){
             // noticia já existe, devo EDITAR
+            $this->db->where('id', $dados['id']);
+            unset($dados['id']); // id não deve ser atualizado!
+            $this->db->update('noticias',$dados);
+            return $this->db->affected_rows();
+
         }else{
             // Noticia NÃO existe, devo inserir
             $this->db->insert('noticias', $dados);

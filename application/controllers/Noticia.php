@@ -34,6 +34,7 @@ class Noticia extends CI_Controller
         $this->load->view('painel/noticias', $dados);
         $this->load->view('painel/footer');
     }
+    /* ****************** CADASTRAR ************************************************ */
     public function cadastrar()
     {
         //verifica se o usuário está logado
@@ -60,7 +61,7 @@ class Noticia extends CI_Controller
                 // SALvAR NO BD
                 if($id = $this->noticia->salvar($dados_insert)){
                     set_msg('<p>Notícia cadastrada com sucesso!!</p>');
-                    redirect('noticia/listar', 'refresh');
+                    redirect('noticia/editar/'.$id, 'refresh'); // Redirecionar direto para tela de Editar após o cadastro!
                 }else{
                     set_msg('<p>ERRO - NOTICIA NÃO CADASTRADA</p>');
                 }
@@ -129,6 +130,83 @@ class Noticia extends CI_Controller
         $this->load->view('painel/footer');
     }
 
+    public function editar()
+    {
+        //verifica se o usuário está logado
+        verifica_login();
+
+        //verifica se foi passado o id da notícia
+        $id = $this->uri->segment(3);
+        if ($id > 0) {
+            //id informado, proceder com a EDIÇÃO
+            if ($noticia = $this->noticia->get_single($id)) {
+                $dados['noticia'] = $noticia;
+                $dados_update['id'] = $noticia->id;
+            } else {
+                set_msg('<p>Noticía (id) INEXISTENTE - Escolha uma noticia para EDITAR</p>');
+                redirect('noticia/listar', 'refresh');
+            }
+        } else {
+            set_msg('<p>Noticía (id) inexistente</p>');
+            redirect('noticia/listar', 'refresh');
+        }
+
+        //REGRAS DE VALIDAÇÃO
+        $this->form_validation->set_rules('titulo', 'TÍTULO', 'trim|required');
+        $this->form_validation->set_rules('conteudo', 'CONTEÚDO', 'trim|required');
+        
+        // Verifica a validação
+        if ($this->form_validation->run() == false) {
+            if (validation_errors()) {
+                set_msg(validation_errors);
+            }
+        } else {
+            //Rotina de Edição
+            $this->load->library('upload',config_upload());
+            if(isset($_FILES['imagem']) && $_FILES['imagem']['name'] != ''){
+                //foi enviada uma imagem, deco fazer o upload
+                if($this->upload->do_upload('imagem')){
+                    $imagem_antiga = 'uploads/'.$noticia->imagem;
+                    $dados_upload = $this->upload->data();
+                    $dados_form = $this->input->post();
+                    $dados_update['titulo'] = to_bd($dados_form['titulo']);
+                    $dados_update['conteudo'] = to_bd($dados_form['conteudo']);
+                    $dados_update['imagem'] = $dados_upload['file_name'];
+                    if($this->noticia->salvar($dados_update)){
+                        unlink($imagem_antiga);
+                        set_msg('<p>Noticia ALTERADA COM SUCESSO</p>');
+                        $dados['noticia']->imagem = $dados_update['imagem'];
+                    }else{
+                        set_msg('<p>ERRO!! Nenhuma alteração foi realizada</p>');
+                    }
+                }else{
+                    $msg = $this->upload->display_errors();
+                    set_msg('<p>São permitidos apenas arquivo JPG e PNG de até 521kb</p>');
+                    set_msg();
+                }   
+            }else{
+                // não foi enviada uma imagem pelo form
+                $dados_form = $this->input->post();
+                $dados_update['titulo'] = to_bd($dados_form['titulo']);
+                $dados_update['conteudo'] = to_bd($dados_form['conteudo']);
+               
+                if ($this->noticia->salvar($dados_update)) {   
+                    set_msg('<p>Noticia ALTERADA COM SUCESSO</p>');
+                } else {
+                    set_msg('<p>ERRO!! Nenhuma alteração foi realizada</p>');
+                }
+            }
+        }
+
+
+
+        //carrega a view
+        $dados['titulo'] = 'ALTERAÇÃO DE NOTÍCIAS';
+        $dados['tela'] = 'editar';
+        $this->load->view('painel/header_admin', $dados);
+        $this->load->view('painel/noticias', $dados);
+        $this->load->view('painel/footer');
+    }
 
     
 }

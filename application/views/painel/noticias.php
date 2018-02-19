@@ -57,8 +57,19 @@
                             echo form_submit('enviar', 'Salvar Notícia', array('class'=> 'btn btn-primary'));
                         echo form_close();
                     break;
-                    case 'Editar':
-                        echo 'Tela de Edição';
+                    case 'editar':
+                        echo form_open_multipart('', array('class' => 'form-signin'));
+                        echo form_label('Titulo:', 'titulo');
+                        echo form_input('titulo', set_value('titulo', to_html($noticia->titulo)), array('class' => 'form-control'));
+                        echo form_label('Conteúdo:', 'conteudo');
+                        echo form_textarea('conteudo', to_html(set_value('conteudo', to_html($noticia->conteudo))), array('class' => 'editorhtml desabled'));
+                        echo form_label('Imagem da notícia(thumbnail)', 'imagem');
+                        echo form_upload('imagem');
+                        echo '<p> <small>Imagem ATUAL: <img src="' . base_url('uploads/' . $noticia->imagem) . '" class="img-responsive img-rounded" /> </small><br></p>';
+
+                        echo form_submit('enviar', 'ATUALIZAR Notícia', array('class' => 'btn btn-primary'));
+                        echo form_close();    
+                    
                     break;
                     case 'excluir':
                         echo form_open_multipart('', array('class' => 'form-signin'));
